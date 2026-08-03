@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import { usePhoneMockupCarousel } from "../usePhoneMockupCarousel.js";
 
 const assetBase = "/assets/deutschgenie/figma";
 
@@ -119,58 +120,7 @@ function VisualSystem() {
 
 function LearningJourney() {
   const trackRef = useRef(null);
-  const [activePage, setActivePage] = useState(0);
-
-  function updateActivePage(element) {
-    const maxScroll = element.scrollWidth - element.clientWidth;
-    if (maxScroll <= 0) {
-      setActivePage(0);
-      return;
-    }
-    setActivePage(Math.min(2, Math.round((element.scrollLeft / maxScroll) * 2)));
-  }
-
-  function handleScroll(event) {
-    updateActivePage(event.currentTarget);
-  }
-
-  function handleWheel(event) {
-    const element = event.currentTarget;
-    const maxScroll = element.scrollWidth - element.clientWidth;
-
-    if (event.ctrlKey || maxScroll <= 0) return;
-
-    const rawDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-    const wheelDelta = event.deltaMode === 1 ? rawDelta * 24 : rawDelta;
-
-    if (!wheelDelta) return;
-
-    const nextScroll = Math.max(0, Math.min(maxScroll, element.scrollLeft + wheelDelta));
-
-    if (nextScroll === element.scrollLeft) return;
-
-    element.scrollLeft = nextScroll;
-    updateActivePage(element);
-    event.preventDefault();
-  }
-
-  function scrollToPage(index) {
-    const element = trackRef.current;
-    if (!element) return;
-    const maxScroll = element.scrollWidth - element.clientWidth;
-    element.scrollTo({ left: (maxScroll / 2) * index, behavior: "smooth" });
-    setActivePage(index);
-  }
-
-  useEffect(() => {
-    const element = trackRef.current;
-    if (!element) return undefined;
-    updateActivePage(element);
-
-    const handleResize = () => updateActivePage(element);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const { activePage, handleScroll, handleWheel, scrollToPage } = usePhoneMockupCarousel(trackRef, 3);
 
   return (
     <section className="dg-card dg-learning">

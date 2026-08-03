@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { BarChart3, Edit3, Send, Settings2 } from "lucide-react";
+import { usePhoneMockupCarousel } from "../usePhoneMockupCarousel.js";
 
 const tags = ["UX Research", "UI Design", "Prototyping", "Mobile App Design", "App Development"];
 
@@ -98,56 +99,30 @@ function VisualSystem() {
 
 function UserJourney() {
   const rowRef = useRef(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  function updateProgress(element) {
-    const maxScroll = element.scrollWidth - element.clientWidth;
-    setScrollProgress(maxScroll > 0 ? element.scrollLeft / maxScroll : 0);
-  }
-
-  function handleJourneyScroll(event) {
-    updateProgress(event.currentTarget);
-  }
-
-  function handleJourneyWheel(event) {
-    const row = event.currentTarget;
-    const maxScroll = row.scrollWidth - row.clientWidth;
-
-    if (event.ctrlKey || maxScroll <= 0) {
-      return;
-    }
-
-    const rawDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-    const wheelDelta = event.deltaMode === 1 ? rawDelta * 24 : rawDelta;
-
-    if (!wheelDelta) {
-      return;
-    }
-
-    const nextScroll = Math.max(0, Math.min(maxScroll, row.scrollLeft + wheelDelta));
-
-    if (nextScroll === row.scrollLeft) {
-      return;
-    }
-
-    row.scrollLeft = nextScroll;
-    updateProgress(row);
-    event.preventDefault();
-  }
+  const { activePage, handleScroll, handleWheel, scrollToPage } = usePhoneMockupCarousel(rowRef, 3);
 
   return (
     <section className="coco-card coco-journey">
       <div className="coco-journey-header">
         <SectionTitle>User App Journey</SectionTitle>
-        <div className="coco-progress" aria-hidden="true">
-          <span style={{ width: `${24 + scrollProgress * 76}%` }} />
+        <div className="coco-journey-dots" aria-label="COCO user app journey pages">
+          {[0, 1, 2].map((index) => (
+            <button
+              type="button"
+              className={activePage === index ? "is-active" : ""}
+              aria-label={`Show COCO journey page ${index + 1}`}
+              aria-pressed={activePage === index}
+              key={index}
+              onClick={() => scrollToPage(index)}
+            />
+          ))}
         </div>
       </div>
       <div
         className="coco-phone-row"
         aria-label="COCO user app journey screens"
-        onScroll={handleJourneyScroll}
-        onWheel={handleJourneyWheel}
+        onScroll={handleScroll}
+        onWheel={handleWheel}
         ref={rowRef}
         tabIndex="0"
       >
