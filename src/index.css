@@ -6172,10 +6172,42 @@ video {
     height: auto;
     min-height: 72px;
     padding: 0 22px;
+    position: relative;
+  }
+
+  .menu-toggle {
+    display: flex;
+    flex-shrink: 0;
+    z-index: 30;
   }
 
   .nav-menu {
+    background: rgba(255, 249, 247, 0.98);
+    box-shadow: 0 18px 38px rgba(64, 43, 53, 0.12);
+    display: none;
+    left: 0;
     margin-left: 0;
+    padding: 18px 22px 22px;
+    position: absolute;
+    top: calc(100% + 4px);
+    width: 100%;
+    z-index: 25;
+  }
+
+  .nav-menu.is-open {
+    display: flex;
+  }
+
+  .nav-links {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .nav-links a,
+  .nav-cta {
+    width: 100%;
   }
 
   .hero {
@@ -6240,11 +6272,19 @@ video {
     max-width: none;
   }
 
+  .project-row,
+  .main-projects,
+  .supporting-projects {
+    grid-template-columns: 1fr !important;
+  }
+
   .project-card,
   .project-card.featured,
   .project-card:nth-child(2),
   .project-card:nth-child(3) {
     min-height: auto;
+    min-width: 0;
+    width: 100%;
   }
 
   .featured-group .project-card.featured .image-placeholder,
@@ -6423,8 +6463,10 @@ video {
   .dg-shell,
   .coco-shell,
   .serenely-case .serenely-shell {
+    max-width: 100%;
     padding-left: 14px !important;
     padding-right: 14px !important;
+    width: 100%;
   }
 
   .dg-top-border,
@@ -6435,6 +6477,19 @@ video {
   .serenely-bottom-border {
     margin-left: -14px !important;
     margin-right: -14px !important;
+  }
+
+  .dg-hero-copy,
+  .coco-hero-copy,
+  .serenely-hero-copy,
+  .dg-hero-image,
+  .coco-hero-image,
+  .serenely-hero-phones-image,
+  .project-overview,
+  .project-card,
+  .project-content {
+    min-width: 0;
+    width: 100%;
   }
 
   .dg-hero,
