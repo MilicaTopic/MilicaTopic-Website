@@ -1,6 +1,5 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { BarChart3, Edit3, Send, Settings2 } from "lucide-react";
-import { usePhoneMockupCarousel } from "../usePhoneMockupCarousel.js";
 
 const tags = ["UX Research", "UI Design", "Prototyping", "Mobile App Design", "App Development"];
 
@@ -99,13 +98,60 @@ function VisualSystem() {
 
 function UserJourney() {
   const rowRef = useRef(null);
-  const { activePage, handleScroll, handleWheel, scrollToPage } = usePhoneMockupCarousel(rowRef, 3);
+  const [activePage, setActivePage] = useState(0);
+
+  function updateActivePage(element) {
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    if (maxScroll <= 0) {
+      setActivePage(0);
+      return;
+    }
+    setActivePage(Math.min(2, Math.round((element.scrollLeft / maxScroll) * 2)));
+  }
+
+  function handleJourneyScroll(event) {
+    updateActivePage(event.currentTarget);
+  }
+
+  function handleJourneyWheel(event) {
+    const row = event.currentTarget;
+    const maxScroll = row.scrollWidth - row.clientWidth;
+
+    if (event.ctrlKey || maxScroll <= 0) {
+      return;
+    }
+
+    const rawDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+    const wheelDelta = event.deltaMode === 1 ? rawDelta * 24 : rawDelta;
+
+    if (!wheelDelta) {
+      return;
+    }
+
+    const nextScroll = Math.max(0, Math.min(maxScroll, row.scrollLeft + wheelDelta));
+
+    if (nextScroll === row.scrollLeft) {
+      return;
+    }
+
+    row.scrollLeft = nextScroll;
+    updateActivePage(row);
+    event.preventDefault();
+  }
+
+  function scrollToPage(index) {
+    const row = rowRef.current;
+    if (!row) return;
+    const maxScroll = row.scrollWidth - row.clientWidth;
+    row.scrollTo({ left: (maxScroll / 2) * index, behavior: "smooth" });
+    setActivePage(index);
+  }
 
   return (
     <section className="coco-card coco-journey">
       <div className="coco-journey-header">
         <SectionTitle>User App Journey</SectionTitle>
-        <div className="coco-journey-dots" aria-label="COCO user app journey pages">
+        <div className="coco-journey-dots" aria-label="COCO journey pages">
           {[0, 1, 2].map((index) => (
             <button
               type="button"
@@ -121,8 +167,8 @@ function UserJourney() {
       <div
         className="coco-phone-row"
         aria-label="COCO user app journey screens"
-        onScroll={handleScroll}
-        onWheel={handleWheel}
+        onScroll={handleJourneyScroll}
+        onWheel={handleJourneyWheel}
         ref={rowRef}
         tabIndex="0"
       >

@@ -7024,3 +7024,81 @@ video {
     left: calc((var(--mobile-timeline-x) - 24px)) !important;
   }
 }
+/* Final COCO and Serenely journey dot controls */
+.coco-journey-header,
+.serenely-journey-header {
+  align-items: center !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr !important;
+}
+
+.coco-journey-header .coco-section-title,
+.serenely-journey-header .serenely-section-title {
+  grid-column: 1 !important;
+}
+
+.coco-journey-dots,
+.serenely-journey-dots {
+  align-items: center !important;
+  display: flex !important;
+  gap: 10px !important;
+  grid-column: 2 !important;
+  justify-content: center !important;
+  justify-self: center !important;
+  line-height: 0 !important;
+  min-height: 18px !important;
+}
+
+.coco-journey-dots button,
+.serenely-journey-dots button {
+  appearance: none !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+  display: block !important;
+  flex: 0 0 auto !important;
+  height: 12px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, width 0.2s ease !important;
+  width: 12px !important;
+}
+
+.coco-journey-dots button {
+  background: #dff6d8 !important;
+  border: 1px solid #52b856 !important;
+}
+
+.coco-journey-dots button.is-active {
+  background: #52b856 !important;
+  border-color: #52b856 !important;
+  transform: scale(1.06) !important;
+  width: 28px !important;
+}
+
+.serenely-journey-dots button {
+  background: #f3fac0 !important;
+  border: 1px solid #a8d36a !important;
+}
+
+.serenely-journey-dots button.is-active {
+  background: #a8d36a !important;
+  border-color: #a8d36a !important;
+  transform: scale(1.06) !important;
+  width: 28px !important;
+}
+
+@media (max-width: 700px) {
+  .coco-journey-header,
+  .serenely-journey-header {
+    grid-template-columns: 1fr !important;
+    justify-items: start !important;
+    row-gap: 14px !important;
+  }
+
+  .coco-journey-dots,
+  .serenely-journey-dots {
+    grid-column: 1 !important;
+    justify-self: center !important;
+    width: auto !important;
+  }
+}

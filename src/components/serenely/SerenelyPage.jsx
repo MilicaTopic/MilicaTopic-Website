@@ -1,6 +1,5 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { CalendarDays, Settings, UserRound } from "lucide-react";
-import { usePhoneMockupCarousel } from "../usePhoneMockupCarousel.js";
 
 const assetBase = "/assets/serenely";
 
@@ -157,13 +156,60 @@ function CareCenteredSystem() {
 
 function VolunteerJourney() {
   const rowRef = useRef(null);
-  const { activePage, handleScroll, handleWheel, scrollToPage } = usePhoneMockupCarousel(rowRef, 3);
+  const [activePage, setActivePage] = useState(0);
+
+  function updateActivePage(element) {
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    if (maxScroll <= 0) {
+      setActivePage(0);
+      return;
+    }
+    setActivePage(Math.min(2, Math.round((element.scrollLeft / maxScroll) * 2)));
+  }
+
+  function handleScroll(event) {
+    updateActivePage(event.currentTarget);
+  }
+
+  function handleWheel(event) {
+    const element = event.currentTarget;
+    const maxScroll = element.scrollWidth - element.clientWidth;
+
+    if (event.ctrlKey || maxScroll <= 0) {
+      return;
+    }
+
+    const rawDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+    const wheelDelta = event.deltaMode === 1 ? rawDelta * 24 : rawDelta;
+
+    if (!wheelDelta) {
+      return;
+    }
+
+    const nextScroll = Math.max(0, Math.min(maxScroll, element.scrollLeft + wheelDelta));
+
+    if (nextScroll === element.scrollLeft) {
+      return;
+    }
+
+    element.scrollLeft = nextScroll;
+    updateActivePage(element);
+    event.preventDefault();
+  }
+
+  function scrollToPage(index) {
+    const element = rowRef.current;
+    if (!element) return;
+    const maxScroll = element.scrollWidth - element.clientWidth;
+    element.scrollTo({ left: (maxScroll / 2) * index, behavior: "smooth" });
+    setActivePage(index);
+  }
 
   return (
     <section className="serenely-card serenely-journey">
       <div className="serenely-journey-header">
         <SectionTitle>The Volunteer Journey</SectionTitle>
-        <div className="serenely-journey-dots" aria-label="Serenely volunteer journey pages">
+        <div className="serenely-journey-dots" aria-label="Serenely journey pages">
           {[0, 1, 2].map((index) => (
             <button
               type="button"
